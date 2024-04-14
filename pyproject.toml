@@ -1,0 +1,20 @@
+[tool.poetry]
+name = "sensors"
+version = "0.1.0"
+description = ""
+authors = ["Ivan <i.karniyenka@softteco.com>"]
+
+[tool.poetry.dependencies]
+python = "^3.10"
+fastapi = "^0.110.1"
+uvicorn = {extras = ["standard"], version = "^0.29.0"}
+clickhouse-driver = "^0.2.7"
+fastapi-utilities = "^0.2.0"
+smbus2 = "^0.4.3"
+
+[tool.poetry.dev-dependencies]
+pytest = "^5.2"
+
+[build-system]
+requires = ["poetry-core>=1.0.0"]
+build-backend = "poetry.core.masonry.api"

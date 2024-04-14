@@ -1,0 +1,41 @@
+version: '3'
+
+services:
+  ch_server:
+    image: yandex/clickhouse-server
+    ports:
+      - "8123:8123"
+    volumes:
+      - ./db:/var/lib/clickhouse
+    networks:
+      - app_netw
+
+  ch_client:
+    image: yandex/clickhouse-client
+    entrypoint:
+      - /bin/sleep
+    command:
+      - infinity
+    networks:
+      - app_netw
+  api:
+    build: .
+    container_name: fastapi-application
+    environment:
+      PORT: 8001
+    ports:
+      - '8001:8001'
+    expose:
+      - 8001
+    networks:
+      - app_netw
+    command: [
+      "poetry", "run",
+      "uvicorn",
+      "main:app",
+      "--host", "0.0.0.0",
+      "--port", "8001"
+    ]
+
+networks:
+  app_netw:
