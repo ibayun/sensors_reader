@@ -27,6 +27,8 @@ services:
       - '8001:8001'
     expose:
       - 8001
+    volumes:
+      - ./data:/app/data
     networks:
       - app_netw
     command: [

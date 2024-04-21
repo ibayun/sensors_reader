@@ -7,6 +7,7 @@ ARDUINO_ADDRESS = 0x12
 # Initialize I2C
 bus = smbus2.SMBus(1)
 
+
 def read_sensor_values():
     # Reading 10 bytes (2 bytes per sensor)
     data = bus.read_i2c_block_data(ARDUINO_ADDRESS, 0, 10)
@@ -25,10 +26,8 @@ def read_sensor_values():
     gray_scale = (data[9] << 8) | data[8]
     return sensor_value_a0, temp_ds18b20, co2_sensor_value, gray_scale
 
-def run_sensor_collect():
-    sensor_value_a0=temp_ds18b20=co2_sensor_value=gray_scale = ""
-    try:
-
+try:
+    while True:
         # Read data from the  sensors
         sensor_value_a0, temp_ds18b20, co2_sensor_value, gray_scale = read_sensor_values()
 
@@ -38,12 +37,12 @@ def run_sensor_collect():
         #print("CO2 sensor value:", co2_sensor_value)
         #print("Gray scale sensor value:", gray_scale)
         from datetime import datetime
-        with open('sensors_16.txt', "a+") as f:
-            d = datetime.now().strftime("%Y-%m-%d %H:%M:%S")
-            c = d + ":  " + "moisture - " + str(sensor_value_a0) + " temp - " + str(temp_ds18b20)[:4] + " co2 - " + str(co2_sensor_value) + " gray - " + str(gray_scale) + "\n"
-            f.write(c)
-            time.sleep(5) # waiting fo the next values
 
-    except KeyboardInterrupt:
-        print("Program was interruted by user")
-    return sensor_value_a0, temp_ds18b20, co2_sensor_value, gray_scale
+        with open('../sensors.txt', "a+") as f:
+          d = datetime.now().strftime("%Y-%m-%d %H:%M:%S")
+          c = d + ":  " + "moisture - " + str(sensor_value_a0) + " temp - " + str(temp_ds18b20)[:4] + " co2 - " + str(co2_sensor_value) + " gray - " + str(gray_scale) + "\n"
+          f.write(c)
+        time.sleep(5) # waiting fo the next values
+
+except KeyboardInterrupt:
+    print("Program was interruted by user")
