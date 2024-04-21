@@ -7,8 +7,8 @@ from typing import Union
 from fastapi import FastAPI
 from pydantic import BaseModel
 
-from models import NewTable, session
-from sample_script import read_sensor_values
+# from models import NewTable, session
+from sample_script import read_sensor_values, run_sensor_collect
 
 app = FastAPI()
 
@@ -38,10 +38,10 @@ app.include_router(router)
 async def collect_data():
     sensor_value_a0=temp_ds18b20=co2_sensor_value=gray_scale=""
     try:
-        sensor_value_a0, temp_ds18b20, co2_sensor_value, gray_scale = read_sensor_values()
+        sensor_value_a0, temp_ds18b20, co2_sensor_value, gray_scale = run_sensor_collect()
     except Exception as exc:
         print(exc)
-    async with aiofiles.open('data/sensors.txt', mode="a+") as f:
+    async with aiofiles.open('sensors_data_16.txt', mode="a+") as f:
         d = datetime.now().strftime("%Y-%m-%d %H:%M:%S")
         c = d + ":  " + "moisture - " + str(sensor_value_a0) + " temp - " + str(temp_ds18b20)[:4] + " co2 - " + str(
             co2_sensor_value) + " gray - " + str(gray_scale) + "\n"
