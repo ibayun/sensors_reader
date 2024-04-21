@@ -38,11 +38,11 @@ def run_sensor_collect():
         #print("CO2 sensor value:", co2_sensor_value)
         #print("Gray scale sensor value:", gray_scale)
         from datetime import datetime
-        with open('sensors_16.txt', "a+") as f:
+        with open('sensors_21.txt', "a+") as f:
             d = datetime.now().strftime("%Y-%m-%d %H:%M:%S")
             c = d + ":  " + "moisture - " + str(sensor_value_a0) + " temp - " + str(temp_ds18b20)[:4] + " co2 - " + str(co2_sensor_value) + " gray - " + str(gray_scale) + "\n"
             f.write(c)
-            time.sleep(5) # waiting fo the next values
+            #time.sleep(5) # waiting fo the next values
 
     except KeyboardInterrupt:
         print("Program was interruted by user")
