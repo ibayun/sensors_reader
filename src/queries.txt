@@ -1,0 +1,55 @@
+SELECT
+    max(t) AS v,
+    toStartOfInterval(tm, toIntervalMinute(1)) AS h
+FROM
+(
+    SELECT
+        toUInt32OrNull(datas.temperature) AS t,
+        timestamp AS tm
+    FROM device_data
+    WHERE t IS NOT NULL
+)
+WHERE date(tm) = '2024-04-22'
+GROUP BY h
+ORDER BY h ASC
+
+
+
+SELECT
+    trunc(avg(t), 2) AS avg_temp,
+    trunc(max(t), 2) as max_temp,
+    trunc(min(t), 2) as min_temp,
+    
+    trunc(avg(moist), 2) AS avg_moist,
+    trunc(max(moist), 2) as max_moist,
+    trunc(min(moist), 2) as min_moist,
+
+    trunc(avg(gray), 2) AS avg_gray,
+    trunc(max(gray), 2) as max_gray,
+    trunc(min(gray), 2) as min_gray,
+
+    trunc(avg(co2), 2) AS avg_co2,
+    trunc(max(co2), 2) as max_co2,
+    trunc(min(co2), 2) as min_co2,
+
+    toStartOfInterval(tm, toIntervalMinute(30)) AS h
+FROM
+(
+    SELECT
+        toFloat32OrNull(datas.temperature) AS t,
+ 	toFloat32OrNull(datas.moisture) AS moist,
+	toFloat32OrNull(datas.gray) AS gray,
+	toFloat32OrNull(datas.co2) AS co2,
+        timestamp AS tm
+    FROM device_data
+    WHERE t IS NOT NULL
+)
+WHERE date(tm) = '2024-04-22'
+GROUP BY h
+ORDER BY h ASC
+
+
+
+
+
+select * from (select toFloat32OrNull(datas.temperature) from device_data where timestamp between '2024-04-22 15:12:59' and '2024-04-22 16:12:59')
