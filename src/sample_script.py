@@ -38,7 +38,8 @@ def run_sensor_collect():
         #print("CO2 sensor value:", co2_sensor_value)
         #print("Gray scale sensor value:", gray_scale)
         from datetime import datetime
-        with open('sensors_21.txt', "a+") as f:
+        log_file_name = f'raw_{datetime.now().strftime("%Y-%m-%d")}'
+        with open(log_file_name, "a+") as f:
             d = datetime.now().strftime("%Y-%m-%d %H:%M:%S")
             c = d + ":  " + "moisture - " + str(sensor_value_a0) + " temp - " + str(temp_ds18b20)[:4] + " co2 - " + str(co2_sensor_value) + " gray - " + str(gray_scale) + "\n"
             f.write(c)
