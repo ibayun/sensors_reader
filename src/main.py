@@ -12,8 +12,13 @@ from connector import ch_client
 # from models import NewTable, session
 from sample_script import read_sensor_values, run_sensor_collect
 
+class IgnoreChangeDetectedFilter(logging.Filter):
+    def filter(self, record: logging.LogRecord):
+        return '%d change%s detected: %s' != record.msg
+
 logger = logging.getLogger('uvicorn.error')
 logger.setLevel(logging.DEBUG)
+logger.addFilter(IgnoreChangeDetectedFilter())
 
 app = FastAPI()
 
@@ -59,8 +64,13 @@ async def collect_data():
     timestamp_data = d.timestamp()
     data = {"moisture": sensor_value_a0, "temperature": temp_ds18b20, "co2": co2_sensor_value, "gray": gray_scale}
     json_data = json.dumps(data)
-    print(timestamp_data, json_data)
+    # print(timestamp_data, json_data)
     logger.debug(f'{timestamp_data} - {json_data}')
     query = f"Insert into device_data (datas, timestamp) VALUES ('{json_data}', {timestamp_data})"
     ch_client.execute(query)
 
+import uvicorn
+
+
+if __name__ == "__main__":
+    uvicorn.run(app, host="0.0.0.0", port=8000, log_config="log.ini")
