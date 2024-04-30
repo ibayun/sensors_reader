@@ -5,13 +5,15 @@ import logging
 import aiofiles
 from fastapi_utilities import repeat_every
 from typing import Union
-
+from datetime import date 
 from fastapi import FastAPI
 from pydantic import BaseModel
 
 from connector import ch_client
 # from models import NewTable, session
 from sample_script import read_sensor_values, run_sensor_collect
+from queries import *
+
 
 class IgnoreChangeDetectedFilter(logging.Filter):
     def filter(self, record: logging.LogRecord):
@@ -36,6 +38,17 @@ async def read_ping():
         c = d + "\n"
         await f.write(c)
     return {"ping": "pong"}
+
+
+@app.get("/exctract_data")
+async def get_data(interval: int = 120, start_date: date = date(2024,4,28), end_date: date = date(2024,4,29)):
+    #if start_date is None:
+    #    start_date = date(2024, 4, 28)
+    #if end_date is None:
+    #    end_date = date(2024, 4, 28)
+    data_query = exctract_data_query(interval=interval, start_date=start_date, end_date=end_date)
+    data = ch_client.execute(data_query)
+    return data
 
 
 from fastapi import APIRouter
