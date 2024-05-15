@@ -66,3 +66,14 @@ sudo systemctl restart nginx
 
 allow nginx to ufw:
 sudo ufw allow 'Nginx Full'
+
+
+
+* Bluetooth
+sudo bluetoothctl -a
+scan on
+devices
+pair XX:XX:XX:XX:XX:XX
+trust XX:XX:XX:XX:XX:XX
+quit
+sudo rfcomm bind /dev/rfcomm0 XX:XX:XX:XX:XX:XX 1

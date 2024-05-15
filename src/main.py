@@ -2,7 +2,6 @@
 from datetime import datetime
 import logging
 
-import aiofiles
 from fastapi_utilities import repeat_every
 from typing import Union
 from datetime import date 
@@ -32,11 +31,6 @@ class Sensor(BaseModel):
 
 @app.get("/ping")
 async def read_ping():
-    ping_file_name = f'{datetime.now().date()}_ping'
-    async with aiofiles.open(ping_file_name, mode="a+") as f:
-        d = datetime.now().strftime("%Y-%m-%d %H:%M:%S")
-        c = d + "\n"
-        await f.write(c)
     return {"ping": "pong"}
 
 
@@ -68,11 +62,11 @@ async def collect_data():
         sensor_value_a0, temp_ds18b20, co2_sensor_value, gray_scale = run_sensor_collect()
     except Exception as exc:
         print(exc)
-    async with aiofiles.open(log_file_name, mode="a+") as f:
-        dates_ = datetime.now().strftime("%Y-%m-%d %H:%M:%S")
-        c = dates_ + ":  " + "moisture - " + str(sensor_value_a0) + " temp - " + str(temp_ds18b20)[:4] + " co2 - " + str(co2_sensor_value) + " gray - " + str(gray_scale) + "\n"
+    #async with aiofiles.open(log_file_name, mode="a+") as f:
+    #    dates_ = datetime.now().strftime("%Y-%m-%d %H:%M:%S")
+    #    c = dates_ + ":  " + "moisture - " + str(sensor_value_a0) + " temp - " + str(temp_ds18b20)[:4] + " co2 - " + str(co2_sensor_value) + " gray - " + str(gray_scale) + "\n"
 
-        await f.write(c)
+    #    await f.write(c)
 
     import json
     timestamp_data = d.timestamp()
