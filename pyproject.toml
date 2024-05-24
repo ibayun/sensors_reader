@@ -16,6 +16,7 @@ waitress = "^3.0.0"
 SQLAlchemy = "^2.0.29"
 clickhouse-sqlalchemy = "^0.3.1"
 aiofiles = "^23.2.1"
+pyserial = "^3.5"
 
 [tool.poetry.dev-dependencies]
 pytest = "^5.2"
