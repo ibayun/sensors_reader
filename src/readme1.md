@@ -70,7 +70,7 @@ sudo ufw allow 'Nginx Full'
 
 
 * Bluetooth
-sudo bluetoothctl -a
+sudo bluetoothctl
 scan on
 devices
 pair XX:XX:XX:XX:XX:XX

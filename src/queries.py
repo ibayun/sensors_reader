@@ -1,5 +1,12 @@
-def exctract_data_query(*, interval, start_date, end_date):
-  return  f"""
+from src.connector import ch_client
+
+
+def executor(query) -> None:
+    ch_client.execute(query)
+
+
+def extract_data_query(*, interval, start_date, end_date):
+  return  executor(f"""
 SELECT
     trunc(avg(t), 2) AS avg_temp,
     trunc(max(t), 2) as max_temp,
@@ -33,4 +40,10 @@ WHERE date(tm) between '{start_date}' and '{end_date}'
 GROUP BY h
 ORDER BY h ASC
 
-""" 
+""")
+
+
+def write_sensors_data(*, json_data, timestamp_data):
+  executor(f"""
+Insert into device_data (datas, timestamp) VALUES ('{json_data}', {timestamp_data}) 
+  """)
