@@ -4,12 +4,11 @@ import logging
 
 from fastapi_utilities import repeat_every
 from typing import Union
-from datetime import date 
+from datetime import date
 from fastapi import FastAPI
 from pydantic import BaseModel
 
 from connector import ch_client
-# from models import NewTable, session
 from sample_script import read_sensor_values, run_sensor_collect
 from queries import *
 
@@ -36,10 +35,6 @@ async def read_ping():
 
 @app.get("/exctract_data")
 async def get_data(interval: int = 120, start_date: date = date(2024,4,28), end_date: date = date(2024,4,29)):
-    #if start_date is None:
-    #    start_date = date(2024, 4, 28)
-    #if end_date is None:
-    #    end_date = date(2024, 4, 28)
     data_query = exctract_data_query(interval=interval, start_date=start_date, end_date=end_date)
     data = ch_client.execute(data_query)
     return data
@@ -62,17 +57,11 @@ async def collect_data():
         sensor_value_a0, temp_ds18b20, co2_sensor_value, gray_scale = run_sensor_collect()
     except Exception as exc:
         print(exc)
-    #async with aiofiles.open(log_file_name, mode="a+") as f:
-    #    dates_ = datetime.now().strftime("%Y-%m-%d %H:%M:%S")
-    #    c = dates_ + ":  " + "moisture - " + str(sensor_value_a0) + " temp - " + str(temp_ds18b20)[:4] + " co2 - " + str(co2_sensor_value) + " gray - " + str(gray_scale) + "\n"
-
-    #    await f.write(c)
 
     import json
     timestamp_data = d.timestamp()
     data = {"moisture": sensor_value_a0, "temperature": temp_ds18b20, "co2": co2_sensor_value, "gray": gray_scale}
     json_data = json.dumps(data)
-    # print(timestamp_data, json_data)
     logger.debug(f'{timestamp_data} - {json_data}')
     query = f"Insert into device_data (datas, timestamp) VALUES ('{json_data}', {timestamp_data})"
     ch_client.execute(query)
