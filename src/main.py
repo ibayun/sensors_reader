@@ -32,7 +32,7 @@ async def get_data(interval: int = 120, start_date: date = date(2024, 4, 28), en
 
 
 @app.on_event("startup")
-@repeat_every(seconds=4)
+@repeat_every(seconds=60)
 async def collect_data():
     sensor_value_a0 = temp_ds18b20 = co2_sensor_value = gray_scale = ""
     d = datetime.now()
