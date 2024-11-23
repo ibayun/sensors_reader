@@ -14,3 +14,6 @@ more info woh to work with many sensors by i2c [here](https://learn.adafruit.com
 
 ____
 [inter-ingretaed circuit protocol](https://docs.arduino.cc/learn/communication/wire/)
+
+
+![Schema](https://github.com/user-attachments/assets/67a29fa9-5a5b-4fa1-9cd4-26252954bd1a)
