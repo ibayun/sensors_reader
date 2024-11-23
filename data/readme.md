@@ -8,3 +8,4 @@ Name | pins | voltage | additional |
 | Light Intensity | A3 | +5 | |
 | Bluetooth | RX, TX | +5 | |
 | Temerature | A4, A5 | +3| AHT20, BMP280|
+| DC/Current | A4, A5 | +5| ina3221 |
