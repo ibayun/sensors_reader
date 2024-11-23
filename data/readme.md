@@ -10,4 +10,4 @@ Name | pins | voltage | additional |
 | Temerature | A4, A5 | +3| AHT20, BMP280|
 | DC/Current | A4, A5 | +5| ina3221 |
 
-more info woh to work with many sensors be i2c [here](https://learn.adafruit.com/working-with-multiple-i2c-devices/overview)
+more info woh to work with many sensors by i2c [here](https://learn.adafruit.com/working-with-multiple-i2c-devices/overview)
