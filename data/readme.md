@@ -11,3 +11,4 @@ Name | pins | voltage | additional |
 | DC/Current | A4, A5 | +5| ina3221 |
 
 more info woh to work with many sensors by i2c [here](https://learn.adafruit.com/working-with-multiple-i2c-devices/overview)
+[inter-ingretaed circuit protocol](https://docs.arduino.cc/learn/communication/wire/)
