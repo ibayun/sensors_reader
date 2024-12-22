@@ -1,24 +1,27 @@
 #include <avr/sleep.h>
 #include <avr/wdt.h>
 
-const int ledPin = 13;       // Built-in LED pin to indicate wake state
-const unsigned long sleepTimeMs = 3000;  // Sleep time in milliseconds
+const int ledPin = 13;         // Built-in LED pin to indicate wake state
+const int analogPin = A0;      // Analog pin to set high
+const unsigned long sleepTimeMs = 7000;  // Sleep time in milliseconds
 
 volatile bool watchdogInterruptTriggered = false;
 
 void setup() {
-  pinMode(ledPin, OUTPUT);    // Set LED pin as output
-  wdt_disable();              // Disable Watchdog Timer at startup
+  pinMode(ledPin, OUTPUT);      // Set LED pin as output
+  pinMode(analogPin, OUTPUT);   // Set analog pin as digital output
+  digitalWrite(analogPin, HIGH); // Set analog pin high
+  wdt_disable();                // Disable Watchdog Timer at startup
 }
 
 void loop() {
-  // Wake up for 5 seconds
-  digitalWrite(ledPin, HIGH); // Turn on LED to indicate wake state
-  delay(3000);                // Keep the Arduino awake for 5 seconds
+  // Wake up for 7 seconds
+  digitalWrite(ledPin, HIGH);  // Turn on LED to indicate wake state
+  delay(7000);                 // Keep the Arduino awake for 7 seconds
 
   // Sleep for a specified duration
-  digitalWrite(ledPin, LOW);  // Turn off LED to indicate sleep state
-  goToSleep(sleepTimeMs);     // Pass sleep time in milliseconds
+  digitalWrite(ledPin, LOW);   // Turn off LED to indicate sleep state
+  goToSleep(sleepTimeMs);      // Pass sleep time in milliseconds
 }
 
 void goToSleep(unsigned long sleepDuration) {
@@ -26,7 +29,7 @@ void goToSleep(unsigned long sleepDuration) {
 
   while (sleptTime < sleepDuration) {
     // Set Watchdog Timer for a 1-second interval
-    wdt_enable(WDTO_1S);
+    wdt_enable(WDTO_2S);
     WDTCSR |= (1 << WDIE);    // Enable Watchdog Interrupt mode
 
     // Set sleep mode to Power-down for low power consumption
@@ -43,7 +46,7 @@ void goToSleep(unsigned long sleepDuration) {
 
     // Check if watchdog interrupt triggered wakeup
     if (watchdogInterruptTriggered) {
-      sleptTime += 1000;      // Increment slept time by 1 second (1000 ms)
+      sleptTime += 2000;      // Increment slept time by 1 second (1000 ms)
     }
   }
 }
