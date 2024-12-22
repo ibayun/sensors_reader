@@ -3,6 +3,7 @@
 
 const int ledPin = 13;         // Built-in LED pin to indicate wake state
 const int analogPin = A0;      // Analog pin to set high
+
 const unsigned long sleepTimeMs = 7000;  // Sleep time in milliseconds
 
 volatile bool watchdogInterruptTriggered = false;
@@ -10,17 +11,21 @@ volatile bool watchdogInterruptTriggered = false;
 void setup() {
   pinMode(ledPin, OUTPUT);      // Set LED pin as output
   pinMode(analogPin, OUTPUT);   // Set analog pin as digital output
-  digitalWrite(analogPin, HIGH); // Set analog pin high
   wdt_disable();                // Disable Watchdog Timer at startup
 }
 
 void loop() {
   // Wake up for 7 seconds
   digitalWrite(ledPin, HIGH);  // Turn on LED to indicate wake state
+  digitalWrite(analogPin, LOW); // Set analog pin high
+
+
   delay(7000);                 // Keep the Arduino awake for 7 seconds
 
   // Sleep for a specified duration
   digitalWrite(ledPin, LOW);   // Turn off LED to indicate sleep state
+  digitalWrite(analogPin, HIGH); // Set analog pin high
+
   goToSleep(sleepTimeMs);      // Pass sleep time in milliseconds
 }
 
