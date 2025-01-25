@@ -1,4 +1,4 @@
-from src.connector import ch_client
+from connector import ch_client
 
 
 def executor(query) -> None:

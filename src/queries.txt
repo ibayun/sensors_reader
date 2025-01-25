@@ -50,6 +50,74 @@ ORDER BY h ASC
 
 
 
+CREATE Table device_data
+(
+    id UUID,
+    datas JSON,
+    timestamp DateTime
+)
+ENGINE = MergeTree
+ORDER BY timestamp
+
 
 
 select * from (select toFloat32OrNull(datas.temperature) from device_data where timestamp between '2024-04-22 15:12:59' and '2024-04-22 16:12:59')
+
+
+
+SELECT
+    trunc(avg(t), 2) AS temp,
+    trunc(max(t), 2) as max_t,
+    trunc(min(t), 2) as min_t,
+    
+    trunc(avg(moist), 2) AS moistur,
+    trunc(max(moist), 2) as max_m,
+    trunc(min(moist), 2) as min_m,
+
+    trunc(avg(gray), 2) AS gray_,
+    trunc(max(gray), 2) as max_g,
+    trunc(min(gray), 2) as min_g,
+
+    //trunc(avg(co2), 2) AS avg_co2,
+    //trunc(max(co2), 2) as max_co2,
+    //trunc(min(co2), 2) as min_co2,
+
+    trunc(avg(busvoltage2), 2) AS arduino_V,
+    //trunc(max(busvoltage2), 2) as max_a,
+    //trunc(min(busvoltage2), 2) as min_a,
+
+    trunc(avg(current_mA2), 2) AS arduino_mA,
+    //trunc(max(current_mA2), 2) as max_arA,
+    //trunc(min(current_mA2), 2) as min_arA,
+
+    trunc(avg(busvoltage1), 2) AS solar_panel_V,
+    trunc(max(busvoltage1), 2) as max_sp,
+    trunc(min(busvoltage1), 2) as min_sp,    
+
+    trunc(avg(current_mA1), 2) AS solar_panel_mA,
+    trunc(max(current_mA1), 2) as max_spA,
+    trunc(min(current_mA1), 2) as minn_spA,
+
+    toStartOfInterval(tm, toIntervalMinute(5)) aS h
+FROM
+(
+    SELECT
+        toFloat32OrNull(datas.temperature) AS t,
+        toFloat32OrNull(datas.moisture) AS moist,
+        toFloat32OrNull(datas.gray) AS gray,
+        toFloat32OrNull(datas.co2) AS co2,
+        datas.busvoltage2 AS busvoltage2,
+        datas.busvoltage1 AS busvoltage1,
+        datas.current_mA2 AS current_mA2,
+        datas.current_mA1 AS current_mA1,
+        timestamp AS tm
+    FROM device_data
+    
+)
+WHERE date(tm) between  '2024-11-01' and '2024-11-24'
+GROUP BY h
+ORDER BY h ASC
+
+
+select table_schema as Database__name, round(sum(data_length)/1024/1024/1024, 2) as Size_GB from information_schema.TABLES group by table_schema
+
