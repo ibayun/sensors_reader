@@ -1,4 +1,5 @@
-import os 
+import logging
+import os
 
 from contextlib import contextmanager
 from datetime import datetime
@@ -12,25 +13,27 @@ from dotenv import load_dotenv
 
 load_dotenv()
 
+logger = logging.getLogger('uvicorn.error')
+logger.setLevel(logging.DEBUG)
+
 
 @contextmanager
 def socketcontext(*args, **kwargs):
     bluetooth_adress = os.environ.get("BLUETOOTH_ADRESS")
-    print(f"Adress - {bluetooth_adress}\n")
 
     if not bluetooth_adress:
         raise ValueError("bluetooth_adress is not in .env file")
-    print(f"Trying to connect - {datetime.now()}\n")
+    logger.info(f"Trying to connect - {datetime.now()}\n")
     sensor_address = bluetooth_adress
     socket = bluetooth.BluetoothSocket(bluetooth.RFCOMM)
     socket.connect((sensor_address, 1))
-    print("Connected\n")
+    logger.info("Connected\n")
     
     try:
         yield socket
     finally:
         socket.close()
-        print("DisConnected\n")
+        logger.info("DisConnected\n")
 
 
 def read_the_data_from_socked(socket):
@@ -45,15 +48,14 @@ def read_the_data_from_socked(socket):
 
 def updated_parser():
     with socketcontext() as sock:
-        print("Start READing...\n")
+        logger.info("Start READing...\n")
         sock.send(b'1')
         parsed_data = read_the_data_from_socked(sock)
         try:
             data = json.loads(parsed_data)
-            print('dumpet data\n\n')
-            print(f"{data} - dict ---")
+            logger.info(f"{data}")
         except json.JSONDecodeError as e:
-            print(f"cautghr the next error - {e}")
+            logger.info(f"Caught the next error - {e}")
     
     return data
 
@@ -63,12 +65,12 @@ def run_sensor_collect():
     try:
         data = updated_parser()
     except KeyboardInterrupt:
-        print("Program was interruted by user")
+        logger.info("Program was interrupted by user")
     return data
 
 
 if __name__ == "__main__":
     while True:
         import time
-        print(run_sensor_collect())
+        run_sensor_collect()
         time.sleep(2)
