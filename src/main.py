@@ -1,3 +1,4 @@
+import asyncio
 import logging
 import json
 from datetime import datetime
@@ -9,6 +10,7 @@ from fastapi import FastAPI, APIRouter
 
 from queries import *
 from services import extract_data_from_device
+from utils import log_execution_time
 
 logger = logging.getLogger('uvicorn.error')
 logger.setLevel(logging.DEBUG)
@@ -20,6 +22,7 @@ app.include_router(router)
 
 
 @app.get("/ping")
+
 async def read_ping():
     return {"ping": "pong"}
 
@@ -31,12 +34,18 @@ async def get_data(interval: int = 120, start_date: date = date(2024, 4, 28), en
 
 
 @app.on_event("startup")
-@repeat_every(seconds=7)
+async def startup_event():
+    asyncio.create_task(collect_data())
+
+@log_execution_time
 async def collect_data():
-    if data:=extract_data_from_device():
-        write_sensors_data(json_data=json.dumps(data), timestamp_data=datetime.now().timestamp())
-    else:
-        logger.debug(f'Devices are sleeping...')
+    while True:
+        data = await extract_data_from_device()
+        if data:
+            await write_sensors_data(json_data=json.dumps(data), timestamp_data=datetime.now().timestamp())
+        else:
+            logger.info('Devices are sleeping...')
+        await asyncio.sleep(5)
 
 
 if __name__ == "__main__":

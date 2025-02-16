@@ -9,6 +9,9 @@ import json
 
 from dotenv import load_dotenv
 
+from utils import log_execution_time
+
+
 load_dotenv()
 
 logger = logging.getLogger('uvicorn.error')
@@ -23,11 +26,14 @@ def socketcontext(*args, **kwargs):
         raise ValueError("bluetooth_adress is not in .env file")
     logger.info(f"Trying to connect - {datetime.now()}\n")
     socket = bluetooth.BluetoothSocket(bluetooth.RFCOMM)
-    socket.connect((bluetooth_adress, 1))
-    logger.info("Connected\n")
     
     try:
+        socket.connect((bluetooth_adress, 1))
+        logger.info("Connected\n")
         yield socket
+    except Exception as exc:
+        logger.info(exc)
+        yield None
     finally:
         socket.close()
         logger.info("DisConnected\n")
@@ -45,6 +51,8 @@ def read_the_data_from_socked(socket):
 
 def updated_parser():
     with socketcontext() as sock:
+        if not sock:
+            return []
         logger.info("Start READing...\n")
         sock.send(b'1')
         parsed_data = read_the_data_from_socked(sock)
@@ -101,7 +109,8 @@ def set_up_data_from_ina_sensor(inas_data, data_for_insert):
         )
 
 
-def extract_data_from_device():
+@log_execution_time
+async def extract_data_from_device():
     d = datetime.now()
     raw_data = run_sensor_collect()
     if raw_data:
@@ -122,9 +131,8 @@ def extract_data_from_device():
         }
         if inas_data:
             set_up_data_from_ina_sensor(inas_data, data_for_insert)
-        return data_for_insert
-    print("Have no data")
-    return None
+        await data_for_insert
+    logger.info("Have no data")
 
 
 if __name__ == "__main__":
