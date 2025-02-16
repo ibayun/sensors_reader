@@ -47,3 +47,4 @@ def write_sensors_data(*, json_data, timestamp_data):
   executor(f"""
 Insert into device_data (datas, timestamp) VALUES ('{json_data}', {timestamp_data}) 
   """)
+

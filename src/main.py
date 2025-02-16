@@ -34,7 +34,7 @@ async def get_data(interval: int = 120, start_date: date = date(2024, 4, 28), en
 @repeat_every(seconds=7)
 async def collect_data():
     if data:=extract_data_from_device():
-        write_sensors_data(json_data=json.dumps(data), timestamp_data=datetime.now())
+        write_sensors_data(json_data=json.dumps(data), timestamp_data=datetime.now().timestamp())
     else:
         logger.debug(f'Devices are sleeping...')
 

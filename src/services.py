@@ -122,10 +122,8 @@ def extract_data_from_device():
         }
         if inas_data:
             set_up_data_from_ina_sensor(inas_data, data_for_insert)
-
-        json_data = json.dumps(data_for_insert)
-        logger.debug(f'{d} - {json_data}')
-        return json_data
+        return data_for_insert
+    print("Have no data")
     return None
 
 
